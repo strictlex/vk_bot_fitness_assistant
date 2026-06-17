@@ -74,8 +74,6 @@ def main():
     tz = datetime.timezone(datetime.timedelta(hours=4))
     now_locale = datetime.datetime.now(tz)
     tommorow_date = (now_locale+datetime.timedelta(days=1)).date()
-    # now = datetime.datetime.now(datetime.timezone.utc)
-    # tomorow = datetime.timedelta(days=1)
     service = get_calendar_service()
     event_result = service.events().list(calendarId='primary',
                                          singleEvents=True,

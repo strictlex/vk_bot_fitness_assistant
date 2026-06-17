@@ -5,6 +5,7 @@ build/
 dist/
 wheels/
 *.egg-info
+.idea/
 
 # Virtual environments
 .venv
@@ -14,5 +15,4 @@ credentials.json
 token.pickle
 .env
 *.pyc
-__pycache__/
-.venv/
+
