@@ -7,8 +7,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
-
+try:
+    locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
+except:
+    pass
 VK_TOKEN = os.getenv('VK_TOKEN')
 
 def main():
