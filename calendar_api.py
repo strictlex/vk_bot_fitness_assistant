@@ -1,4 +1,4 @@
-import os, pickle, datetime
+import os, pickle, datetime,logging
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
@@ -14,22 +14,28 @@ def get_calendar_service():
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
-    if creds is None:
-        creds = get_token()
+
+    if creds and creds.valid:
+        pass
+    elif creds and creds.refresh_token:
+        creds.refresh(Request())
     else:
-        if creds.valid:
-            pass
-        else:
-            if creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                creds = get_token()
+        creds = get_token()
 
     with open('token.pickle', 'wb') as token_file:
-            pickle.dump(creds, token_file)
+            try:
+                pickle.dump(creds, token_file)
+            except Exception as e:
+                logging.error(f"Не удалось сохранить token.pickle: {e}")
+            
     service = build('calendar', 'v3', credentials=creds)
     return service
 
-def get_events(service, time_min=None, time_max=None, max_results=50):
-    events_result = service.events().list(calendarId='primary', singleEvents=True, orderBy='startTime').execute()
-    return events_result.get('items', [])
+def get_events(service,now):
+    event_result = service.events().list(calendarId='primary',
+                                         singleEvents=True,
+                                         orderBy='startTime',
+                                         timeMin = now).execute()
+    events = event_result.get('items',[])
+    return events
+

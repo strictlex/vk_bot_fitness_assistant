@@ -20,7 +20,7 @@ MONTHS_RU = {
 def get_tomorrow_date(offset_hours):
     tz = timezone(timedelta(hours=offset_hours))
     now = datetime.now(tz)
-    return (now+timedelta(days=1)).date()
+    return (now+timedelta(days=1)).date(),now
 
 
 
