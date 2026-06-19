@@ -1,16 +1,26 @@
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
-import os, pickle, datetime, vk_api, locale
+import os, pickle, datetime, vk_api
 from datetime import timezone
 from dotenv import load_dotenv
 
 load_dotenv()
 
-try:
-    locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
-except:
-    pass
+MONTHS_RU = {
+    'January': 'января',
+    'February': 'февраля',
+    'March': 'марта',
+    'April': 'апреля',
+    'May': 'мая',
+    'June': 'июня',
+    'July': 'июля',
+    'August': 'августа',
+    'September': 'сентября',
+    'October': 'октября',
+    'November': 'ноября',
+    'December': 'декабря'
+}
 VK_TOKEN = os.getenv('VK_TOKEN')
 
 def main():
@@ -68,9 +78,10 @@ def main():
         vk = vk_session.get_api()
         date_time_iso = datetime.datetime.fromisoformat(date_time)
         weekday = date_time_iso.strftime("%A")
-        day_month = date_time_iso.strftime("%d %B")
+        day = date_time_iso.strftime("%d")
+        name_month = MONTHS_RU[date_time_iso.strftime("%B")]
         time_day = date_time_iso.strftime("%H:%M")
-        vk.messages.send(user_id=int(vk_id),message = f'{name}, привет! Завтра, {day_month} в {time_day}, жду тебя на тренеровку. Если не получается напиши мне @lanaterenteva',random_id=0)
+        vk.messages.send(user_id=int(vk_id),message = f'{name}, привет! Завтра, {day} {name_month} в {time_day}, жду тебя на тренеровку. Если не получается напиши мне @lanaterenteva',random_id=0)
 
 
     tz = datetime.timezone(datetime.timedelta(hours=4))
