@@ -6,16 +6,17 @@ def parse_description(events):
             client = []
             try:
                 summary = event.get('summary')
-                if not summary or summary.lower() != 'тренеровка':
-                    continue
+                # if not summary or summary.lower() != 'тренеровка':
+                #     continue
                 description = event.get('description')
-                if not description:
-                    raise ValueError("Отсутствует описание события")
+                if not description or description.split('\n')[0].lower() != 'тренеровка':
+                    continue
+                    # raise ValueError("Отсутствует описание события")
                 lines = description.split('\n')
-                if len(lines) < 2:
-                    raise ValueError("В описании должно быть две строки: имя и VK ID")
-                name = lines[0].strip()
-                vk_id = int(lines[1].strip())
+                if len(lines) < 3:
+                    raise ValueError("В описании должно быть три строки: тренеровка, имя и VK ID")
+                name = lines[1].strip()
+                vk_id = int(lines[2].strip())
                 start = event.get('start', {})
                 start_time = start.get('dateTime')
                 if not start_time:
