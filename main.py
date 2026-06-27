@@ -36,7 +36,7 @@ for client in events_list:
         day = date_time_iso.strftime("%d")
         name_month = utils.MONTHS_RU[date_time_iso.strftime("%B")]
         time_day = date_time_iso.strftime("%H:%M")
-        text = f'{name}, привет! Завтра, {day} {name_month} в {time_day}, жду тебя на тренеровку. Если не получается напиши мне @lanaterenteva'
+        text = f'{name}, привет! Завтра, {day} {name_month} в {time_day}, жду тебя на тренировку. Если не получается напиши мне @lanaterenteva'
 
         vk_sender.send_vk_message(client[2], text)
         logging.info(f"Отправлено {name}")
