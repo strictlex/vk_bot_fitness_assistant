@@ -1,35 +1,58 @@
-import logging,config, vk_api, vk_api.bot_longpoll, vk_api.utils,json, vk_sender
-from vk_api.bot_longpoll import VkBotEventType, VkBotLongPoll
+import logging
+import config
+import vk_api
+import json
+from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def main(file):
     try:
+        logging.info("Загрузка списка клиентов")
         with open(file,'r',encoding='utf-8') as f:
-                clients = json.load(f)
-        
+            clients = json.load(f)
+        logging.info(f"Загружено {len(clients)} клиентов")
+
+        logging.info("Авторизация VK...")
         vk_session = vk_api.VkApi(token=config.VK_TOKEN)
         vk = vk_session.get_api()
+        logging.info("VK авторизация успешна")
 
-        longpoll = vk_api.bot_longpoll.VkBotLongPoll(vk_session,config.GROUP_ID)
+        logging.info("Создание LongPoll...")
+        longpoll = VkBotLongPoll(vk_session,config.GROUP_ID)
+        logging.info(f"LongPoll запущен для группы {config.GROUP_ID}. Ожидание сообщений...")
 
-        while True:
+        for event in longpoll.listen():
             try:
-                 for event in longpoll.listen():
-                    if event.type == VkBotEventType.MESSAGE_NEW:
-                         from_id = event.obj.message['from_id']   # type: ignore
-                         if from_id == config.TRAINER_VK_ID:
-                              continue
-                         text = event.obj.message['text']           # type: ignore
-                         for name, vk_id in clients.items():
-                              if vk_id == from_id:
-                                    vk.messages.send(
-                                        user_id=config.TRAINER_VK_ID,
-                                        message=f"От клиента {name}: {text}",
-                                        random_id=get_random_id()
-                                        )
-                                    logging.info(f'Ошибки')
+                if event.type == VkBotEventType.MESSAGE_NEW:
+                        from_id = event.obj.message['from_id']   # type: ignore
+                        text = event.obj.message['text']           # type: ignore
+                        logging.info(f"Получено сообщение от {from_id}: {text}")
+
+                        if from_id == config.TRAINER_VK_ID:
+                            logging.info("Сообщение от тренера, игнорируем")
+                            continue
+
+                        found = False
+                        for name, vk_id in clients.items():
+                            if vk_id == from_id:
+                                vk.messages.send(
+                                    user_id=config.TRAINER_VK_ID,
+                                    message=f"От клиента {name}: {text}",
+                                    random_id=get_random_id()
+                                    )
+                                logging.info(f"Переслано сообщение от клиента {name} тренеру")
+                                found = True
+                                break
+                        if not found:
+                             logging.info(f"Сообщение от пользователя {from_id}, игнорируем")
             except Exception as e:
-                logging.error(f"Ошибка в listener: {e}")
+                logging.error(f"Ошибка при обработке события: {e}", exc_info=True)
+
     except Exception as e:
-                logging.error(f"Ошибка в listener: {e}")
+        logging.critical(f"Критическая ошибка в listener: {e}", exc_info=True)
+        raise
+
+if __name__ == '__main__':
+    main('clients.json')
