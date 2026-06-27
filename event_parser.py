@@ -1,4 +1,6 @@
-import datetime, vk_sender
+import datetime, vk_sender,logging,config
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def parse_description(events):
         event_list =[]
@@ -11,11 +13,11 @@ def parse_description(events):
                     continue
                 elif description.split('\n')[0].lower() == 'тренировка':
                     check_lines = description.split('\n')
-                    if len(check_lines) // 2 == 0:
-                        text = f'В описании тренировок на завтра есть нестыковки. Если ты получила это сообщение, то исправь и уведоми клиента сама'
-                        vk_sender.send_vk_message(8011518,text)
-                        raise ValueError("В описании должно быть две строки: тренировка, имя и VK ID")
-                    elif len(check_lines) // 2 != 0 and len(check_lines) >2:
+                    if len(check_lines) % 2 == 0:
+                        text = f'В описании тренировок на завтра для {check_lines[1]} есть нестыковки. Если ты получила это сообщение, то исправь и уведоми клиента сама'
+                        vk_sender.send_vk_message(config.TRAINER_VK_ID,text)
+                        logging.info(f'в {check_lines} есть огрехи')
+                    elif len(check_lines) % 2 != 0 and len(check_lines) >2:
                         lines = iter(check_lines)
                         next(lines)
                         while True:
