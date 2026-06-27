@@ -10,7 +10,7 @@ def main(file):
             logging.info('Загружает клиентов')
 
         for name, vk_id in clients.items():
-            name = name.split()[0]
+            name = name.split()[1]
             text = f'Привет, {name}! Отправь пожалуйста как ты сегодня питалась.'
             vk_sender.send_vk_message(vk_id, text)
             logging.info(f"Отправлен запрос отчёта клиенту {name} (ID {vk_id})")
