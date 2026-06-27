@@ -42,11 +42,10 @@ def main(file):
                                     message=f"От клиента {name}(vk.com/id{from_id}):)",
                                     random_id=get_random_id()
                                     )
-                                vk.method('messages.forwardMessages', {
-                                    'peer_id': from_id,
-                                    'message_ids': [event.obj.message['id']],
-                                    'user_id': config.TRAINER_VK_ID
-                                })
+                                vk.messages.forward_messages(
+                                    peer_id = from_id,
+                                    message_ids = [event.obj.message['id']], # type: ignore
+                                    user_id = config.TRAINER_VK_ID )
                                 logging.info(f"Переслано сообщение от клиента {name} тренеру")
                                 found = True
                                 break
