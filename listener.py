@@ -44,7 +44,7 @@ def main(file):
                                     )
                                 vk.messages.forwardMessages(
                                     peer_id = from_id,
-                                    message_id = [event.obj.message['id']], # type: ignore
+                                    message_ids = [event.obj.message['id']], # type: ignore
                                     user_id = config.TRAINER_VK_ID )
                                 logging.info(f"Переслано сообщение от клиента {name} тренеру")
                                 found = True
