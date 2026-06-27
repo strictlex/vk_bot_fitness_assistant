@@ -37,14 +37,14 @@ def main(file):
                         found = False
                         for name, vk_id in clients.items():
                             if vk_id == from_id:
-                                vk.messages.send(
-                                    user_id=config.TRAINER_VK_ID,
-                                    message=f"От клиента {name}(vk.com/id{from_id}):)",
-                                    random_id=get_random_id()
-                                    )
+                                # vk.messages.send(
+                                #     user_id=config.TRAINER_VK_ID,
+                                #     message=f"От клиента {name}(vk.com/id{from_id}):)",
+                                #     random_id=get_random_id()
+                                #     )
                                 forward_data = {
                                     'peer_id': from_id,
-                                    'message_ids': [event.obj.message['id']]
+                                    'message_ids': [event.obj.message['id']] # type: ignore
                                 }
                                 forward_json = json.dumps(forward_data, ensure_ascii=False)
                                 vk.messages.send(
