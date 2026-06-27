@@ -42,13 +42,15 @@ def main(file):
                                     message=f"От клиента {name}(vk.com/id{from_id}):)",
                                     random_id=get_random_id()
                                     )
+                                forward_data = {
+                                    'peer_id': from_id,
+                                    'message_ids': [event.obj.message['id']]
+                                }
+                                forward_json = json.dumps(forward_data, ensure_ascii=False)
                                 vk.messages.send(
                                     user_id=config.TRAINER_VK_ID,
                                     random_id=get_random_id(),
-                                    forward={
-                                        'peer_id': from_id,
-                                        'message_ids': [event.obj.message['id']] # type: ignore
-                                    }
+                                    forward=forward_json
                                 )
                                 logging.info(f"Переслано сообщение от клиента {name} тренеру")
                                 found = True
